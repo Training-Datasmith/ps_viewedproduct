@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
 * 2007-2018 PrestaShop.
 *
@@ -319,7 +321,8 @@ class Ps_Viewedproduct extends Module implements WidgetInterface
             return [];
         }
 
-        $activeProductsQuery = Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS('
+        $activeProductsQuery = Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS(
+            '
             SELECT p.id_product
             FROM ' . _DB_PREFIX_ . 'product_shop p
             WHERE p.active = 1 
