@@ -148,7 +148,7 @@ class Ps_Viewedproduct extends Module implements WidgetInterface
         $helper->table = $this->table;
         $helper->default_form_language = $lang->id;
         $configFormLang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG');
-        $helper->allow_employee_form_lang = $configFormLang ? $configFormLang : 0;
+        $helper->allow_employee_form_lang = $configFormLang ?: 0;
         $helper->identifier = $this->identifier;
         $helper->submit_action = 'submitBlockViewed';
         $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) .
@@ -326,7 +326,7 @@ class Ps_Viewedproduct extends Module implements WidgetInterface
             AND p.id_product IN (' . implode(',', array_map('intval', $productIds)) . ')' . Shop::addSqlRestriction(false, 'p')
         );
 
-        return array_map(function ($entry) {
+        return array_map(function (array $entry) {
             return $entry['id_product'];
         }, $activeProductsQuery);
     }
