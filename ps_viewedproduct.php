@@ -66,6 +66,12 @@ class Ps_Viewedproduct extends Module implements WidgetInterface
         $this->templateFile = 'module:ps_viewedproduct/views/templates/hook/ps_viewedproduct.tpl';
     }
 
+    /**
+     * Installs the module, sets the default number of recently-viewed products,
+     * and registers display and product-event hooks.
+     *
+     * @return bool True on success, false on failure
+     */
     public function install()
     {
         return parent::install()
@@ -77,16 +83,35 @@ class Ps_Viewedproduct extends Module implements WidgetInterface
         ;
     }
 
+    /**
+     * Clears the template cache when a product is deleted.
+     *
+     * @param array $params Hook parameters including the deleted product object
+     *
+     * @return void
+     */
     public function hookActionObjectProductDeleteAfter($params)
     {
         $this->_clearCache($this->templateFile);
     }
 
+    /**
+     * Clears the template cache when a product is updated.
+     *
+     * @param array $params Hook parameters including the updated product object
+     *
+     * @return void
+     */
     public function hookActionObjectProductUpdateAfter($params)
     {
         $this->_clearCache($this->templateFile);
     }
 
+    /**
+     * Renders the module configuration form and handles the save form submission.
+     *
+     * @return string HTML of the configuration page
+     */
     public function getContent()
     {
         $output = '';
@@ -167,6 +192,11 @@ class Ps_Viewedproduct extends Module implements WidgetInterface
         return $helper->generateForm([$fields_form]);
     }
 
+    /**
+     * Returns current configuration values for the module settings form.
+     *
+     * @return array{PRODUCTS_VIEWED_NBR: int|string}
+     */
     public function getConfigFieldsValues()
     {
         return [
@@ -174,6 +204,13 @@ class Ps_Viewedproduct extends Module implements WidgetInterface
         ];
     }
 
+    /**
+     * Returns a cache key unique to the current visitor's viewed-product list.
+     *
+     * @param string|null $name Optional name suffix
+     *
+     * @return string Cache ID incorporating the pipe-separated list of viewed product IDs
+     */
     public function getCacheId($name = null)
     {
         $key = implode('|', $this->getViewedProductIds());
@@ -181,6 +218,15 @@ class Ps_Viewedproduct extends Module implements WidgetInterface
         return parent::getCacheId('ps_viewedproduct|' . $key);
     }
 
+    /**
+     * Renders the recently-viewed-products widget. On the displayProductAdditionalInfo hook,
+     * records the current product as viewed instead of rendering.
+     *
+     * @param string|null $hookName    Name of the hook rendering this widget
+     * @param array       $configuration Hook configuration parameters (may include 'product')
+     *
+     * @return string|false|null Rendered HTML, false if no products to show, or null for the record-only hook
+     */
     public function renderWidget($hookName = null, array $configuration = [])
     {
         if (isset($configuration['product']['id_product'])) {
@@ -210,6 +256,14 @@ class Ps_Viewedproduct extends Module implements WidgetInterface
         return $this->fetch($this->templateFile, $this->getCacheId());
     }
 
+    /**
+     * Returns template variables for the recently-viewed-products widget.
+     *
+     * @param string|null $hookName    Name of the hook rendering this widget
+     * @param array       $configuration Hook configuration parameters (may include 'product')
+     *
+     * @return array{products: array}|false Variable map with product data, or false if no viewed products
+     */
     public function getWidgetVariables($hookName = null, array $configuration = [])
     {
         if (isset($configuration['product']['id_product'])) {
