@@ -90,13 +90,14 @@ class Ps_Viewedproduct extends Module implements WidgetInterface
         $output = '';
 
         if (Tools::isSubmit('submitBlockViewed')) {
-            if (!($productNbr = Tools::getValue('PRODUCTS_VIEWED_NBR'))) {
+            $productNbr = Tools::getValue('PRODUCTS_VIEWED_NBR');
+            if ($productNbr === false || $productNbr === '') {
                 $output .= $this->displayError($this->trans(
                     'You must fill in the \'Products displayed\' field.',
                     [],
                     'Modules.Viewedproduct.Admin'
                 ));
-            } elseif (0 === (int) ($productNbr)) {
+            } elseif ((int) $productNbr <= 0) {
                 $output .= $this->displayError($this->trans('Invalid number.', [], 'Modules.Viewedproduct.Admin'));
             } else {
                 Configuration::updateValue('PRODUCTS_VIEWED_NBR', (int) $productNbr);
@@ -243,6 +244,10 @@ class Ps_Viewedproduct extends Module implements WidgetInterface
 
     protected function getViewedProductIds()
     {
+        if (empty($this->context->cookie->viewed)) {
+            return array();
+        }
+
         $viewedProductsIds = array_reverse(explode(',', $this->context->cookie->viewed));
         if (null !== $this->currentProductId && in_array($this->currentProductId, $viewedProductsIds)) {
             $viewedProductsIds = array_diff($viewedProductsIds, [$this->currentProductId]);

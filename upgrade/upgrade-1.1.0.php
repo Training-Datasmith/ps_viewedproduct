@@ -31,7 +31,5 @@
  */
 function upgrade_module_1_1_0($module)
 {
-    $module->registerHook('displayProductAdditionalInfo');
-
-    return true;
+    return $module->registerHook('displayProductAdditionalInfo');
 }
