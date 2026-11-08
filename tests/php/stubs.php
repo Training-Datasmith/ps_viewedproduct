@@ -18,7 +18,8 @@ class Stubs
     public static $dbRows = array();
     public static $dbCalls = array();
     public static $shopContextList = array(1);
-    public static $shopRestriction = ' AND p.id_shop IN (1) ';
+    public static $addSqlRestrictionLog = array();
+    public static $presentReturns = array();
     public static $post = array();
     public static $get = array();
     public static $cookieData = array();
@@ -51,7 +52,8 @@ class Stubs
         self::$dbRows = array();
         self::$dbCalls = array();
         self::$shopContextList = array(1);
-        self::$shopRestriction = ' AND p.id_shop IN (1) ';
+        self::$addSqlRestrictionLog = array();
+        self::$presentReturns = array();
         self::$post = array();
         self::$get = array();
         self::$cookieData = array();
@@ -78,6 +80,7 @@ class Stubs
         self::$assembleProductsLog = array();
         self::$assembleProductLog = array();
         self::$presentLog = array();
+        self::$presentReturns = array();
         self::$presentationSettings = new stdClass();
         self::$linkAdminLink = 'ADMIN_LINK';
         self::$linkAdminLinkCalls = array();
@@ -325,11 +328,14 @@ class Db
 
 class Shop
 {
-    public static $restriction;
-
     public static function addSqlRestriction($share = false, $alias = null)
     {
-        return Stubs::$shopRestriction;
+        Stubs::$addSqlRestrictionLog[] = array($share, $alias);
+        if ($alias) {
+            $alias .= '.';
+        }
+
+        return ' AND ' . $alias . 'id_shop IN (' . implode(', ', self::getContextListShopID($share)) . ') ';
     }
 
     public static function getContextListShopID($share = false)
@@ -339,7 +345,8 @@ class Shop
 
     public static function resetStub()
     {
-        Stubs::$shopRestriction = ' AND p.id_shop IN (1) ';
+        Stubs::$shopContextList = array(1);
+        Stubs::$addSqlRestrictionLog = array();
     }
 }
 

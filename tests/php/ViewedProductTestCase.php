@@ -33,4 +33,28 @@ abstract class ViewedProductTestCase extends PHPUnit_Framework_TestCase
         unset(Stubs::$cookieData['viewed']);
         $this->module->context->cookie = new Cookie();
     }
+
+    protected function assignedProducts()
+    {
+        foreach (Stubs::$assignLog as $entry) {
+            if ($entry[0] === 'products') {
+                return $entry[1];
+            }
+        }
+
+        return null;
+    }
+
+    protected function assertLoggedTranslationDomain($messageId, $domain)
+    {
+        foreach (Stubs::$translationLog as $entry) {
+            if ($entry['id'] === $messageId && $entry['domain'] === $domain) {
+                return;
+            }
+        }
+
+        $this->fail(
+            'Expected translation ' . $messageId . ' in domain ' . $domain
+        );
+    }
 }

@@ -38,6 +38,11 @@ class ModuleMetadataTest extends ViewedProductTestCase
             'Display a kind of showcase on your product pages with recently viewed products.',
             $ids
         );
+        $this->assertLoggedTranslationDomain('Viewed products block', 'Modules.Viewedproduct.Admin');
+        $this->assertLoggedTranslationDomain(
+            'Display a kind of showcase on your product pages with recently viewed products.',
+            'Modules.Viewedproduct.Admin'
+        );
     }
 
     public function testConfigXmlMatchesClassVersion()

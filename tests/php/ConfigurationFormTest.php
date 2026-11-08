@@ -19,6 +19,10 @@ class ConfigurationFormTest extends ViewedProductTestCase
         $html = $this->module->getContent();
         $this->assertContains('You must fill in the \'Products displayed\' field.', $html);
         $this->assertNotContains('The settings have been updated.', $html);
+        $this->assertLoggedTranslationDomain(
+            'You must fill in the \'Products displayed\' field.',
+            'Modules.Viewedproduct.Admin'
+        );
         $this->assertCount(0, Stubs::$updateValueLog);
         $this->assertCount(0, Stubs::$clearCacheLog);
     }
@@ -73,6 +77,7 @@ class ConfigurationFormTest extends ViewedProductTestCase
             Stubs::$clearCacheLog[0]['template']
         );
         $this->assertContains('The settings have been updated.', $html);
+        $this->assertLoggedTranslationDomain('The settings have been updated.', 'Admin.Notifications.Success');
         $this->assertNotContains('Invalid number.', $html);
         $this->assertNotContains('You must fill in the \'Products displayed\' field.', $html);
     }
@@ -108,8 +113,17 @@ class ConfigurationFormTest extends ViewedProductTestCase
         $this->assertSame('id_module', $helper->identifier);
         $this->assertSame('submitBlockViewed', $helper->submit_action);
         $this->assertSame('TOKEN_LITE', $helper->token);
-        $this->assertContains('configure=ps_viewedproduct', $helper->currentIndex);
+        $this->assertSame(
+            Stubs::$linkAdminLink
+            . '&configure=ps_viewedproduct&tab_module=front_office_features&module_name=ps_viewedproduct',
+            $helper->currentIndex
+        );
         $this->assertSame(7, $helper->tpl_vars['id_language']);
+        $this->assertSame($this->module->getConfigFieldsValues(), $helper->tpl_vars['fields_value']);
+        $this->assertSame(
+            $this->module->context->controller->getLanguages(),
+            $helper->tpl_vars['languages']
+        );
         $this->assertSame('PRODUCTS_VIEWED_NBR', $helper->generatedForms[0]['form']['input'][0]['name']);
     }
 

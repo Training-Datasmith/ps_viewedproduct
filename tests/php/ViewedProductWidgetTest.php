@@ -59,9 +59,10 @@ class ViewedProductWidgetTest extends ViewedProductTestCase
             $presented[] = (int) $entry['product']['id_product'];
         }
         $this->assertSame(array(30, 20), $presented);
+        $this->assertSame(Stubs::$presentReturns, $this->assignedProducts());
         $this->assertCount(1, Stubs::$assignLog);
         $this->assertCount(1, Stubs::$fetchLog);
-        $this->assertNotSame(false, $result);
+        $this->assertSame(Stubs::$fetchResult, $result);
     }
 
     public function testDisplayLimitAppliesAfterCurrentProductIsRemoved()
@@ -104,9 +105,9 @@ class ViewedProductWidgetTest extends ViewedProductTestCase
     public function testExistenceQueryUsesIntvalAndShopRestriction()
     {
         Stubs::$shopContextList = array(2, 5);
-        Stubs::$shopRestriction = ' AND p.id_shop IN (2, 5) ';
         $this->setViewedCookie('9,2);DELETE');
         $this->module->getWidgetVariables('displayFooterProduct', array());
+        $this->assertSame(array(array(false, 'p')), Stubs::$addSqlRestrictionLog);
         $this->assertGreaterThan(0, count(Stubs::$dbCalls));
         $sql = Stubs::$dbCalls[count(Stubs::$dbCalls) - 1][1];
         $this->assertContains('ps_product_shop', $sql);
@@ -197,6 +198,7 @@ class ViewedProductWidgetTest extends ViewedProductTestCase
         }
         $this->assertSame('bulk-11', Stubs::$presentLog[0]['product']['name']);
         $this->assertCount(2, $vars['products']);
+        $this->assertSame(Stubs::$presentReturns, $vars['products']);
     }
 
     public function testProductLifecycleHooksClearTheTemplateCache()

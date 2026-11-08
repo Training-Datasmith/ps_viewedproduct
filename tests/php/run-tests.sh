@@ -135,7 +135,7 @@ for out in "$sorted_out" "$shuffled_out"; do
     cat "$out" >&2
     exit 1
   fi
-  if grep -qiE '^(There were|WARN|RISKY|INCOMPLETE|Skipped|Tests:.*Skipped)'; then
+  if grep -qiE '^(There were|WARN|RISKY|INCOMPLETE|Skipped|Tests:.*Skipped)' "$out"; then
     if grep -qiE 'Skipped|Risky|Incomplete|WARN' "$out"; then
       echo "Non-clean PHPUnit summary in $out" >&2
       cat "$out" >&2

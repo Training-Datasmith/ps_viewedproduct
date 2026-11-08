@@ -43,10 +43,13 @@ class ProductListingPresenter
             'language' => $language,
         );
 
-        return array(
+        $presented = array(
             'id_product' => $product['id_product'],
             'presented_id' => (int) $product['id_product'],
             'name' => isset($product['name']) ? $product['name'] : 'product-' . $product['id_product'],
         );
+        \Stubs::$presentReturns[] = $presented;
+
+        return $presented;
     }
 }
