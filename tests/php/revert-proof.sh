@@ -40,11 +40,11 @@ case "$mutation" in
     test_filter="testNegativeShowsInvalidNumber"
     ;;
   upgrade110)
-    perl -0pi -e 's/return \$module->registerHook\(.\displayProductAdditionalInfo.\);/\$module->registerHook(\x27displayProductAdditionalInfo\x27);\n\n    return true;/' "$EXPORT/upgrade/upgrade-1.1.0.php"
+    perl -0pi -e "s/return \\\$module->registerHook\\('displayProductAdditionalInfo'\\);/\\\$module->registerHook('displayProductAdditionalInfo');\\n\\n    return true;/" "$EXPORT/upgrade/upgrade-1.1.0.php"
     test_filter="testUpgrade110ReturnsFalseWhenHookRegistrationFails"
     ;;
   empty-cookie)
-    perl -0pi -e 's/\s*if \(empty\(\$this->context->cookie->viewed\)\) \{\s*return array\(\);\s*\}\s*//s' "$EXPORT/ps_viewedproduct.php"
+    perl -0pi -e 's/\s*if \(empty\(\$this->context->cookie->viewed\)\) \{\n\s*return array\(\);\n\s*\}\n\s*//' "$EXPORT/ps_viewedproduct.php"
     test_filter="testUnsetCookieDoesNotQueryProducts"
     ;;
   *)
